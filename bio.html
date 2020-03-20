@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>bio</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+        <style>
+            body { 
+                width:30%;
+                height: 100%;
+                margin:auto; 
+                background-color: white;
+                padding:0; 
+                background-color: whitesmoke;
+                
+            }   
+            img{
+                border-radius: 150px;
+                width: 120px;
+                border: 3px solid darkgray;
+                height: 120px;
+            }
+            #backButton {
+                font:60px calibri;
+                border-collapse: collapse;
+                overflow: hidden;
+                margin: 30px;
+            }
+            #upper-div{
+                padding: 10px;
+                margin: -70px;
+                background-color: whitesmoke;
+                text-align: center;
+                font:18px calibri;
+            }
+            #details-div{
+                width: 100%;
+                padding: 10px 0px 10px 0px;
+                background-color: white;
+                text-align: center;
+                font:18px calibri;
+            }
+            #name-div{
+                width: 100%;
+                padding: 50px 0px 10px 0px;
+                background-color: white;
+                text-align: center;
+                font:24px calibri;
+            }
+            #lower-div{
+                padding: 15px 15px 15px 15px;
+                background-color: white;
+                border: 1px solid lightgray;
+                border-radius: 15px;
+                text-align: center;
+                font:24px calibri;
+            }
+            #data{
+                width: 100%;
+                height: 100%;
+                background-color: whitesmoke;
+                border-collapse: inherit;
+                margin: 10px 10px 10px 10px;
+                padding: 25px 25px 25px 25px;
+                border-radius: 15px;
+                text-align: center;
+            }
+            a:hover{
+                text-decoration: none;
+            }   
+        </style>
+    </head>
+
+    <body onload="JSONParsing()">
+        <a id="backButton" onclick="goBack()">&#8249</a>
+        <div id="data" >
+            <div id="upper-div">
+
+            </div>
+
+            <div id="lower-div">
+                <div id="name-div"></div>
+                <div id="details-div"></div>  
+            </div>
+        </div>
+    </body>
+
+    <script>
+
+        function JSONParsing() {
+
+            getJSON("https://www.dl.dropboxusercontent.com/s/zmad1cl6iotx83b/data.json?dl=1", function(text){
+                
+                var profiles = JSON.parse(text);
+
+                // extract profile ID from URL
+                var pid = parent.document.URL.substring(parent.document.URL.indexOf('id='), parent.document.URL.length);
+
+                // create profile layout for matching ID
+                for (var i = 0; i < Object.keys(profiles).length; i++) {
+
+                    // compare ID from URL with each profile ID from JSON data
+                    // display user profile if matches
+                    if(profiles[i]["_id"] == pid.split("=")[1]){
+                    
+                        var imageContainer = document.getElementById("upper-div");
+
+                        // Image layout
+                        var img = document.createElement('img');
+                        img.src = profiles[i]["picture"];
+                        imageContainer.appendChild(img);
+
+                        // Name layout
+                        var textName = document.getElementById("name-div");
+                        textName.innerHTML = profiles[i]["name"];
+
+                        // Bio layout
+                        var textDetails = document.getElementById("details-div");
+                        textDetails.innerHTML = profiles[i]["bio"];
+
+                    }
+                } 
+            });
+            }
+
+        //function to call json data from URL
+        function getJSON(file, callback) {
+            var rawFile = new XMLHttpRequest();
+            rawFile.overrideMimeType("application/json");
+            rawFile.open("GET", file, true);
+            rawFile.onreadystatechange = function() {
+                if (rawFile.readyState === 4 && rawFile.status == "200") {
+                    callback(rawFile.responseText);
+                }
+            }
+            rawFile.send(null);
+        }
+
+        // function for back button click
+        function goBack() 
+        { 
+            window.history.back(); 
+        }
+
+    </script>
+</html>
