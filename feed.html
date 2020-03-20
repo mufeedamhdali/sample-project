@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Feed</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    
+    <style>
+        p{
+            font:22px calibri;
+            text-align: center;
+        }
+       
+        table
+        {
+            border: 0;
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0px 10px 0px;
+            border-collapse: inherit;
+            border: 1px solid black;
+            text-align: left;
+            
+        }
+        tr, td {
+            margin: 3px;
+            border-collapse: collapse;
+            text-align: center;
+            margin: 3px;
+            position: static;
+            font-size: 30px;
+            padding: 2px;
+        }
+        
+    </style>
+  </head>
+
+  <body onload="JSONParsing()" style = "text-align:center;">
+
+    <div style="margin:auto; width:25%;text-align:center;">
+      <div >
+          <table class="feed" style="background-color:whitesmoke; border: 0;">
+              <tr>
+                  <td style="text-align:left;"><span>Feed</span></td>
+                  <td style="text-align:right;"><span>&#9776</span></td>
+              </tr>
+          </table>
+      </div>   
+    </div>
+
+    <div id="layout" style="margin:auto; width:25%;text-align:center;"></div>
+
+  </body>
+
+  <script>
+
+    function JSONParsing() {
+
+        /* The given URL for json file is "https://www.dropbox.com/s/zmad1cl6iotx83b/data.json?dl=0"
+           To load the file successfully, need to change the end "dl=0" to "dl=1" and replace "www.dropbox.com" 
+           with "dl.dropboxusercontent.com"
+        */
+
+        getJSON("https://www.dl.dropboxusercontent.com/s/zmad1cl6iotx83b/data.json?dl=1", function(text){
+            
+            // Parse JSON object from the URL
+            var profiles = JSON.parse(text);
+
+            // Create list of user profile using JSON data
+            for (var i = 0; i < Object.keys(profiles).length; i++) {
+
+                var container = document.createElement("div");
+                container.className = "list-group";
+                
+                // Whole profile link
+                var listCard = document.createElement("a");
+                listCard.className = "list-group-item";
+                listCard.style="border-radius: 10px;";
+
+                var rowDivision = document.createElement("div");
+                rowDivision.className = "row";
+
+                // Image section of the profile row
+                var tab1 = document.createElement("div");
+                tab1.className="col-sm-2";
+                var img = document.createElement('img');
+                img.src = profiles[i]["picture"];
+                img.style="border-radius: 150px; border: 3px solid whitesmoke;";
+                tab1.appendChild(img);
+                rowDivision.appendChild(tab1);
+
+                // Name section of the profile row
+                var tab2 = document.createElement("div");
+                tab2.className="col-sm-8";
+                var textName = document.createElement('p');
+                textName.className = "list-group-item-text";
+                textName.innerText = profiles[i]["name"];
+                tab2.appendChild(textName);
+                rowDivision.appendChild(tab2);
+
+                // Navigation section of the profile row
+                var tab3 = document.createElement("div");
+                tab3.className="col-sm-2";
+                var textArrow = document.createElement('span');
+                textArrow.className = "glyphicon glyphicon-chevron-right";
+                tab3.appendChild(textArrow);
+                rowDivision.appendChild(tab3);
+
+                listCard.appendChild(rowDivision);
+
+                // Append profile id vaiable from JSON data to the URL
+                listCard.href="details.html?id="+profiles[i]["_id"];
+
+                container.appendChild(listCard);
+
+                var layoutContainer = document.getElementById("layout");
+                layoutContainer.appendChild(container); 
+            }
+        });
+    }
+
+    //function to call json data from URL
+    function getJSON(file, callback) {
+        var rawFile = new XMLHttpRequest();
+        rawFile.overrideMimeType("application/json");
+        rawFile.open("GET", file, true);
+        rawFile.onreadystatechange = function() {
+            if (rawFile.readyState === 4 && rawFile.status == "200") {
+                callback(rawFile.responseText);
+            }
+        }
+        rawFile.send(null);
+    }
+
+  </script>
+</html>
